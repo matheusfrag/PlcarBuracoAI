@@ -152,29 +152,31 @@ export function ScoreInput({
     <div>
       <div className="mb-1 flex items-center justify-between">
         <label className="text-sm font-semibold text-slate-600">{label}</label>
-        <div className="flex overflow-hidden rounded-lg border border-slate-200 text-xs">
-          <button
-            type="button"
-            onClick={() => setModo('total')}
-            className={`px-2.5 py-1 ${modo === 'total' ? 'bg-teal-600 text-white' : 'bg-white text-slate-500'}`}
-          >
-            Total
-          </button>
-          <button
-            type="button"
-            onClick={() => setModo('cartas')}
-            className={`px-2.5 py-1 ${modo === 'cartas' ? 'bg-teal-600 text-white' : 'bg-white text-slate-500'}`}
-          >
-            Cartas
-          </button>
+        <div className="flex items-center gap-2">
+          <div className="flex overflow-hidden rounded-lg border border-slate-200 text-xs">
+            <button
+              type="button"
+              onClick={() => setModo('total')}
+              className={`px-2.5 py-1 ${modo === 'total' ? 'bg-teal-600 text-white' : 'bg-white text-slate-500'}`}
+            >
+              Total
+            </button>
+            <button
+              type="button"
+              onClick={() => setModo('cartas')}
+              className={`px-2.5 py-1 ${modo === 'cartas' ? 'bg-teal-600 text-white' : 'bg-white text-slate-500'}`}
+            >
+              Cartas
+            </button>
+          </div>
           {permitirFoto && (
             <button
               type="button"
               onClick={() => fileRef.current?.click()}
               disabled={analisando}
-              className="border-l border-slate-200 bg-white px-2.5 py-1 text-slate-500 disabled:opacity-50"
-              aria-label="Somar cartas por foto"
-              title="Somar cartas por foto"
+              className="flex h-9 w-9 items-center justify-center rounded-lg border border-teal-300 bg-teal-50 text-lg text-teal-700 transition active:scale-95 enabled:hover:bg-teal-100 disabled:opacity-50"
+              aria-label="Fotografar e somar cartas"
+              title="Fotografar e somar cartas"
             >
               {analisando ? '…' : '📷'}
             </button>
@@ -187,6 +189,7 @@ export function ScoreInput({
           ref={fileRef}
           type="file"
           accept="image/*"
+          capture="environment"
           onChange={handleFoto}
           className="hidden"
         />
