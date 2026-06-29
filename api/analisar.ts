@@ -5,17 +5,29 @@ const GEMINI_URL = 'https://generativelanguage.googleapis.com/v1beta/models'
 const MAX_BASE64_LEN = 8_000_000 // ~6 MB de imagem; barra payloads abusivos
 
 const PROMPT = `Você é um juiz de buraco analisando uma foto dos JOGOS BAIXADOS NA MESA de UMA dupla.
-Identifique cada jogo (conjunto de cartas agrupadas) visível na foto.
+Identifique cada jogo (conjunto de cartas agrupadas/sobrepostas) visível na foto e liste TODAS as cartas de cada jogo.
 
-Para CADA jogo, liste as cartas e classifique:
-- "canastra_real": sequência completa A-2-3-4-5-6-7-8-9-10-J-Q-K-A do MESMO naipe, 14 cartas, SEM coringa.
-- "canastra_limpa": 7 ou mais cartas, SEM coringa (2 ou Joker).
-- "canastra_suja": 7 ou mais cartas, COM pelo menos um coringa (2 ou Joker).
+CONTEXTO DESTE BARALHO:
+- Símbolos válidos: 3,4,5,6,7,8,9,10,J,Q,K,A,2.
+- O "2" é o ÚNICO coringa. NÃO existe joker neste baralho.
+- Um "2" pode estar substituindo outra carta numa sequência (uso como coringa). Mesmo assim, liste-o como "2".
+
+COMO LER CARTAS EMPILHADAS (muito importante):
+- Os jogos geralmente ficam em leque/escada, mostrando só o canto de cada carta. Conte pelos ÍNDICES nos cantos (número/letra + naipe), não pela carta inteira.
+- Conte UMA entrada para cada índice visível — não pule cartas escondidas atrás de outra cuja borda/índice aparece.
+- Sequências são do MESMO naipe e em ordem (ex.: 4,5,6,7...). Use isso para inferir cartas parcialmente cobertas e o naipe.
+- Trincas/grupos são do mesmo número em naipes diferentes.
+- Se o topo da pilha mostra "10" e a base mostra "4" numa escada de copas, deduza 4,5,6,7,8,9,10 de copas.
+
+CLASSIFIQUE cada jogo:
+- "canastra_real": sequência completa A-2-3-4-5-6-7-8-9-10-J-Q-K-A do MESMO naipe, 14 cartas, SEM o 2 como coringa.
+- "canastra_limpa": 7 ou mais cartas, SEM nenhum 2.
+- "canastra_suja": 7 ou mais cartas, COM pelo menos um 2.
 - "jogo_simples": menos de 7 cartas.
 
-Use os símbolos de carta: 3,4,5,6,7,8,9,10,J,Q,K,A,2 (o "2" é o ÚNICO coringa; este baralho não usa joker).
-Se houver cartas empilhadas e você não tiver certeza da quantidade exata, faça sua melhor estimativa
-e reduza a confiança. Responda APENAS com o JSON do schema.`
+Defina "temCoringa" como true se o jogo contém pelo menos um "2".
+Se não tiver certeza da quantidade exata de cartas empilhadas, faça sua melhor estimativa, explique a dúvida em "observacoes" e reduza a "confianca".
+Responda APENAS com o JSON do schema.`
 
 interface GeminiPart {
   text?: string
