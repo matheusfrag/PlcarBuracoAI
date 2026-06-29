@@ -144,6 +144,7 @@ function TeamTotal({
 }
 
 function RoundRow({ round }: { round: Round }) {
+  const navigate = useNavigate()
   const [aberto, setAberto] = useState(false)
   const b1 = calcularPontuacaoRodada(round.team1Score)
   const b2 = calcularPontuacaoRodada(round.team2Score)
@@ -179,14 +180,24 @@ function RoundRow({ round }: { round: Round }) {
               <BlobImg blob={round.team2Score.photo} alt="Jogos dupla 2" />
             </div>
           )}
-          <button
-            onClick={() => {
-              if (confirm('Excluir esta rodada?')) excluirRodada(round.id!)
-            }}
-            className="text-xs font-medium text-red-500"
-          >
-            Excluir rodada
-          </button>
+          <div className="flex gap-4">
+            <button
+              onClick={() =>
+                navigate(`/partida/${round.gameId}/rodada/${round.id}`)
+              }
+              className="text-xs font-medium text-teal-600"
+            >
+              ✎ Editar rodada
+            </button>
+            <button
+              onClick={() => {
+                if (confirm('Excluir esta rodada?')) excluirRodada(round.id!)
+              }}
+              className="text-xs font-medium text-red-500"
+            >
+              Excluir rodada
+            </button>
+          </div>
         </div>
       )}
     </div>

@@ -13,6 +13,7 @@ const router = createBrowserRouter([
   { path: '/nova', element: <GameSetup /> },
   { path: '/partida/:id', element: <GameView /> },
   { path: '/partida/:id/rodada', element: <RoundForm /> },
+  { path: '/partida/:id/rodada/:roundId', element: <RoundForm /> },
 ])
 
 createRoot(document.getElementById('root')!).render(

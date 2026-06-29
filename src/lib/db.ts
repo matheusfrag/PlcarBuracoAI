@@ -65,6 +65,14 @@ export async function adicionarRodada(
   }) as Promise<number>
 }
 
+export async function atualizarRodada(
+  roundId: number,
+  team1Score: TeamRoundScore,
+  team2Score: TeamRoundScore
+): Promise<void> {
+  await db.rounds.update(roundId, { team1Score, team2Score })
+}
+
 export async function excluirRodada(roundId: number): Promise<void> {
   await db.rounds.delete(roundId)
 }
