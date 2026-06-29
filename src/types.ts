@@ -106,6 +106,5 @@ export const RANKS = [
   'K',
   'A',
   '2',
-  'JOKER',
 ] as const
 export type Rank = (typeof RANKS)[number]

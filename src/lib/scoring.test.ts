@@ -9,7 +9,7 @@ import { validarRodada } from './validation'
 describe('sumCards', () => {
   it('soma valores individuais das cartas', () => {
     expect(sumCards(['3', '4', '5'])).toBe(15)
-    expect(sumCards(['A', '2', 'JOKER'])).toBe(45) // 15 + 10(2) + 20(joker)
+    expect(sumCards(['A', '2', 'K'])).toBe(35) // 15 + 10(2) + 10(K)
     expect(sumCards(['8', '9', '10', 'K'])).toBe(40)
     expect(sumCards([])).toBe(0)
   })

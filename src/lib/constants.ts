@@ -14,8 +14,7 @@ export const CARD_VALUES: Record<Rank, number> = {
   Q: 10,
   K: 10,
   A: 15,
-  '2': 10, // coringa vale 10 (regra da casa)
-  JOKER: 20,
+  '2': 10, // único coringa do baralho; vale 10 (regra da casa)
 }
 
 /** Bônus por tipo de canastra. */

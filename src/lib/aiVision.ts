@@ -29,7 +29,7 @@ export function mapearAnalise(bruto: unknown): ResultadoAnalise {
     const cartas = Array.isArray(j?.cartas)
       ? j.cartas.filter((c): c is Rank => RANK_SET.has(c as string))
       : []
-    const temCoringa = cartas.some((c) => c === '2' || c === 'JOKER')
+    const temCoringa = cartas.some((c) => c === '2')
     return {
       cartas,
       temCoringa,

@@ -49,11 +49,11 @@ describe('mapearAnalise', () => {
     expect(r.jogos[0].classificacao).toBe('jogo_simples')
   })
 
-  it('reclassifica limpa→suja quando há coringa em 7+ cartas', () => {
+  it('reclassifica limpa→suja quando há coringa (2) em 7+ cartas', () => {
     const r = mapearAnalise({
       jogos: [
         {
-          cartas: ['6', '6', '6', '6', '6', '6', 'JOKER'],
+          cartas: ['6', '6', '6', '6', '6', '6', '2'],
           temCoringa: false, // IA errou a flag; recalculamos pelas cartas
           classificacao: 'canastra_limpa',
         },

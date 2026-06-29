@@ -23,7 +23,6 @@ const RANK_LABEL: Record<Rank, string> = {
   K: 'K',
   A: 'A',
   '2': '2',
-  JOKER: '🃏',
 }
 
 /**

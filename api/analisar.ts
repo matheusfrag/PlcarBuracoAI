@@ -13,7 +13,7 @@ Para CADA jogo, liste as cartas e classifique:
 - "canastra_suja": 7 ou mais cartas, COM pelo menos um coringa (2 ou Joker).
 - "jogo_simples": menos de 7 cartas.
 
-Use os símbolos de carta: 3,4,5,6,7,8,9,10,J,Q,K,A,2,JOKER (o "2" e o "JOKER" são coringas).
+Use os símbolos de carta: 3,4,5,6,7,8,9,10,J,Q,K,A,2 (o "2" é o ÚNICO coringa; este baralho não usa joker).
 Se houver cartas empilhadas e você não tiver certeza da quantidade exata, faça sua melhor estimativa
 e reduza a confiança. Responda APENAS com o JSON do schema.`
 
