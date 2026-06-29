@@ -227,8 +227,8 @@ function BreakdownCol({
   breakdown: ReturnType<typeof calcularPontuacaoRodada>
 }) {
   const linhas = [
-    ['Canastras', breakdown.canastras],
-    ['Jogos', breakdown.jogosSimples],
+    ['Bônus canastras', breakdown.canastras],
+    ['Cartas baixadas', breakdown.cartasBaixadas],
     ['Batida', breakdown.batida],
     ['Mão', breakdown.cartasNaMao],
     ['Morto', breakdown.morto],

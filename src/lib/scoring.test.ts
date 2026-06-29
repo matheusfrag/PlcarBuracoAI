@@ -9,7 +9,7 @@ import { validarRodada } from './validation'
 describe('sumCards', () => {
   it('soma valores individuais das cartas', () => {
     expect(sumCards(['3', '4', '5'])).toBe(15)
-    expect(sumCards(['A', '2', 'JOKER'])).toBe(55)
+    expect(sumCards(['A', '2', 'JOKER'])).toBe(45) // 15 + 10(2) + 20(joker)
     expect(sumCards(['8', '9', '10', 'K'])).toBe(40)
     expect(sumCards([])).toBe(0)
   })
@@ -41,14 +41,14 @@ describe('calcularPontuacaoRodada', () => {
       canastrasLimpas: 1, // 200
       canastrasSujas: 2, // 200
       canastrasReais: 1, // 500
-      jogosSimplesPontos: 45,
+      cartasBaixadasPontos: 45,
       cartasNaMaoPontos: 30,
       pegouMorto: true,
       bateu: false,
     })
     // 200 + 200 + 500 + 45 - 30 + 0 = 915
     expect(r.canastras).toBe(900)
-    expect(r.jogosSimples).toBe(45)
+    expect(r.cartasBaixadas).toBe(45)
     expect(r.cartasNaMao).toBe(-30)
     expect(r.total).toBe(915)
   })
@@ -56,7 +56,7 @@ describe('calcularPontuacaoRodada', () => {
   it('penaliza cartas na mão e morto não pego juntos', () => {
     const r = calcularPontuacaoRodada({
       ...emptyTeamRoundScore(),
-      jogosSimplesPontos: 50,
+      cartasBaixadasPontos: 50,
       cartasNaMaoPontos: 70,
       pegouMorto: false,
     })

@@ -41,7 +41,7 @@ export default function TeamRoundInput({
         canastrasLimpas: r.patch.canastrasLimpas,
         canastrasSujas: r.patch.canastrasSujas,
         canastrasReais: r.patch.canastrasReais,
-        jogosSimplesPontos: r.patch.jogosSimplesPontos,
+        cartasBaixadasPontos: r.patch.cartasBaixadasPontos,
       })
     } catch (e) {
       setErroIA(e instanceof Error ? e.message : 'Falha ao analisar')
@@ -89,10 +89,10 @@ export default function TeamRoundInput({
       />
 
       <ScoreInput
-        label="Jogos simples (cartas baixadas)"
-        value={score.jogosSimplesPontos}
-        onChange={(v) => set('jogosSimplesPontos', v)}
-        hint="Trincas e sequências com menos de 7 cartas."
+        label="Pontos das cartas baixadas"
+        value={score.cartasBaixadasPontos}
+        onChange={(v) => set('cartasBaixadasPontos', v)}
+        hint="Some TODAS as cartas na mesa, inclusive as das canastras. O bônus das canastras (100/200/500) é adicionado automaticamente pelos contadores acima."
       />
 
       <ScoreInput

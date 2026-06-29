@@ -21,8 +21,12 @@ export interface TeamRoundScore {
   canastrasLimpas: number
   canastrasSujas: number
   canastrasReais: number
-  /** Pontos das cartas baixadas em jogos simples (< 7 cartas), valor positivo. */
-  jogosSimplesPontos: number
+  /**
+   * Soma do valor de TODAS as cartas baixadas na mesa (inclui as cartas que
+   * estão dentro das canastras). O bônus das canastras é somado à parte pelos
+   * contadores acima. Valor positivo.
+   */
+  cartasBaixadasPontos: number
   /** Pontos das cartas que sobraram na mão dos dois jogadores, valor positivo (será subtraído). */
   cartasNaMaoPontos: number
   pegouMorto: boolean
@@ -66,7 +70,7 @@ export interface ResultadoAnalise {
   /** Campos a pré-preencher no TeamRoundScore. */
   patch: Pick<
     TeamRoundScore,
-    'canastrasLimpas' | 'canastrasSujas' | 'canastrasReais' | 'jogosSimplesPontos'
+    'canastrasLimpas' | 'canastrasSujas' | 'canastrasReais' | 'cartasBaixadasPontos'
   >
   confianca: 'alta' | 'media' | 'baixa'
   observacoes?: string
@@ -77,7 +81,7 @@ export interface ResultadoAnalise {
 /** Detalhamento do cálculo de pontos de uma dupla numa rodada. */
 export interface ScoreBreakdown {
   canastras: number
-  jogosSimples: number
+  cartasBaixadas: number
   batida: number
   cartasNaMao: number
   morto: number

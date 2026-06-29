@@ -16,7 +16,7 @@ export function sumCards(ranks: Rank[]): number {
  *
  * Fórmula:
  *   total = bônus das canastras
- *         + pontos dos jogos simples
+ *         + pontos de TODAS as cartas baixadas (inclui as das canastras)
  *         + bônus de batida (se bateu)
  *         − pontos das cartas na mão
  *         − penalidade de morto (se não pegou)
@@ -29,14 +29,14 @@ export function calcularPontuacaoRodada(
     score.canastrasSujas * CANASTRA_BONUS.suja +
     score.canastrasReais * CANASTRA_BONUS.real
 
-  const jogosSimples = score.jogosSimplesPontos
+  const cartasBaixadas = score.cartasBaixadasPontos
   const batida = score.bateu ? BATIDA_BONUS : 0
   const cartasNaMao = -score.cartasNaMaoPontos
   const morto = score.pegouMorto ? 0 : -MORTO_PENALTY
 
-  const total = canastras + jogosSimples + batida + cartasNaMao + morto
+  const total = canastras + cartasBaixadas + batida + cartasNaMao + morto
 
-  return { canastras, jogosSimples, batida, cartasNaMao, morto, total }
+  return { canastras, cartasBaixadas, batida, cartasNaMao, morto, total }
 }
 
 /** Cria uma pontuação de rodada vazia (zeros e flags falsas). */
@@ -45,7 +45,7 @@ export function emptyTeamRoundScore(): TeamRoundScore {
     canastrasLimpas: 0,
     canastrasSujas: 0,
     canastrasReais: 0,
-    jogosSimplesPontos: 0,
+    cartasBaixadasPontos: 0,
     cartasNaMaoPontos: 0,
     pegouMorto: false,
     bateu: false,

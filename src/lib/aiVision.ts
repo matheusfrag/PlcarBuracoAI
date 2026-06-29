@@ -44,9 +44,12 @@ export function mapearAnalise(bruto: unknown): ResultadoAnalise {
       .length,
     canastrasReais: jogos.filter((j) => j.classificacao === 'canastra_real')
       .length,
-    jogosSimplesPontos: jogos
-      .filter((j) => j.classificacao === 'jogo_simples')
-      .reduce((soma, j) => soma + sumCards(j.cartas as Rank[]), 0),
+    // Soma de TODAS as cartas baixadas (inclui as das canastras); o bônus das
+    // canastras é aplicado à parte na fórmula de pontuação.
+    cartasBaixadasPontos: jogos.reduce(
+      (soma, j) => soma + sumCards(j.cartas as Rank[]),
+      0
+    ),
   }
 
   const confianca =
