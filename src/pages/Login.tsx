@@ -5,6 +5,7 @@ export default function Login({ onSuccess }: { onSuccess: () => void }) {
   const [senha, setSenha] = useState('')
   const [erro, setErro] = useState('')
   const [carregando, setCarregando] = useState(false)
+  const [mostrarSenha, setMostrarSenha] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -30,14 +31,25 @@ export default function Login({ onSuccess }: { onSuccess: () => void }) {
           </h1>
         </div>
         <form onSubmit={handleSubmit} className="space-y-3">
-          <input
-            type="password"
-            value={senha}
-            onChange={(e) => setSenha(e.target.value)}
-            placeholder="Senha"
-            autoFocus
-            className="w-full rounded-lg border border-slate-300 px-3 py-3 text-center text-lg focus:border-teal-500 focus:ring-2 focus:ring-teal-200 focus:outline-none"
-          />
+          <div className="relative">
+            <input
+              type={mostrarSenha ? 'text' : 'password'}
+              value={senha}
+              onChange={(e) => setSenha(e.target.value)}
+              placeholder="Senha"
+              autoFocus
+              className="w-full rounded-lg border border-slate-300 px-3 py-3 pr-11 text-center text-lg focus:border-teal-500 focus:ring-2 focus:ring-teal-200 focus:outline-none"
+            />
+            <button
+              type="button"
+              onClick={() => setMostrarSenha((v) => !v)}
+              className="absolute inset-y-0 right-0 flex items-center px-3 text-lg text-slate-400"
+              aria-label={mostrarSenha ? 'Ocultar senha' : 'Mostrar senha'}
+              title={mostrarSenha ? 'Ocultar senha' : 'Mostrar senha'}
+            >
+              {mostrarSenha ? '🙈' : '👁️'}
+            </button>
+          </div>
           {erro && <p className="text-sm text-red-600">{erro}</p>}
           <button
             type="submit"

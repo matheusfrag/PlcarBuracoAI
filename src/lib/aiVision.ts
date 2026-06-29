@@ -123,7 +123,9 @@ async function postAnalise(
   foto: Blob,
   modo: 'mesa' | 'mao'
 ): Promise<unknown> {
-  const comprimida = await comprimirImagem(foto)
+  // Resolução/qualidade maiores na análise ajudam a IA a ler os índices das
+  // cartas corretamente (ainda bem abaixo do limite de payload do servidor).
+  const comprimida = await comprimirImagem(foto, 1600, 0.85)
   const imagem = await blobParaBase64(comprimida)
 
   const res = await fetch('/api/analisar', {
