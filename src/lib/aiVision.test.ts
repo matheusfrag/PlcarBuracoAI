@@ -158,4 +158,20 @@ describe('somarCartasDeAnalise (cartas na mão)', () => {
     expect(somarCartasDeAnalise({}).total).toBe(0)
     expect(somarCartasDeAnalise(null).confianca).toBe('baixa')
   })
+
+  it('tolera cartas com naipe junto (ex.: 9♦, JS, K de ouros)', () => {
+    const r = somarCartasDeAnalise({
+      jogos: [
+        {
+          cartas: ['9♦', '7♦', '5♥', 'JS', '10♠', 'K de ouros', 'Q♣'],
+          temCoringa: false,
+          classificacao: 'jogo_simples',
+        },
+      ],
+      confianca: 'media',
+    })
+    // 9(10)+7(5)+5(5)+J(10)+10(10)+K(10)+Q(10) = 60
+    expect(r.cartas).toEqual(['9', '7', '5', 'J', '10', 'K', 'Q'])
+    expect(r.total).toBe(60)
+  })
 })

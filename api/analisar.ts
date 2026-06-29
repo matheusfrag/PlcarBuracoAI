@@ -8,7 +8,7 @@ const PROMPT_MESA = `Você é um juiz de buraco analisando uma foto dos JOGOS BA
 Identifique cada jogo (conjunto de cartas agrupadas/sobrepostas) visível na foto e liste TODAS as cartas de cada jogo.
 
 CONTEXTO DESTE BARALHO:
-- Símbolos válidos: 3,4,5,6,7,8,9,10,J,Q,K,A,2.
+- Cada carta deve ser informada APENAS pelo índice, SEM o naipe: 3,4,5,6,7,8,9,10,J,Q,K,A,2 (ex.: um 9 de ouros é "9", um valete de espadas é "J").
 - O "2" é o ÚNICO coringa. NÃO existe joker neste baralho.
 - Um "2" pode estar substituindo outra carta numa sequência (uso como coringa). Mesmo assim, liste-o como "2".
 
@@ -32,7 +32,7 @@ Responda APENAS com o JSON do schema.`
 const PROMPT_MAO = `Você está analisando uma foto de CARTAS SOLTAS espalhadas na mesa — são as cartas que sobraram na mão de UMA dupla no buraco, agora espalhadas para contagem.
 
 CONTEXTO DESTE BARALHO:
-- Símbolos válidos: 3,4,5,6,7,8,9,10,J,Q,K,A,2.
+- Cada carta deve ser informada APENAS pelo índice, SEM o naipe: 3,4,5,6,7,8,9,10,J,Q,K,A,2 (ex.: um 9 de ouros é "9", um valete é "J").
 - Não existe joker. Aqui as cartas NÃO formam jogos — são cartas avulsas, apenas para somar.
 
 TAREFA:
@@ -95,7 +95,17 @@ export default async function handler(
         items: {
           type: 'object',
           properties: {
-            cartas: { type: 'array', items: { type: 'string' } },
+            cartas: {
+              type: 'array',
+              items: {
+                type: 'string',
+                // Força o índice puro (sem naipe) — evita "9♦"/"JS" não serem somados.
+                enum: [
+                  '3', '4', '5', '6', '7', '8', '9', '10',
+                  'J', 'Q', 'K', 'A', '2',
+                ],
+              },
+            },
             temCoringa: { type: 'boolean' },
             classificacao: {
               type: 'string',

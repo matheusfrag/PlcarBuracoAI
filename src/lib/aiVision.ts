@@ -17,6 +17,38 @@ const CLASSIFICACOES: Classificacao[] = [
 ]
 
 /**
+ * Normaliza um rótulo de carta vindo da IA para um Rank válido.
+ * Tolera naipe junto ("9♦", "JS", "K de ouros") extraindo o índice do INÍCIO.
+ * Rejeita rótulos ambíguos como "99" ou "100" (segundo dígito após o índice).
+ */
+function normalizarRank(raw: unknown): Rank | null {
+  if (typeof raw !== 'string') return null
+  const s = raw.toUpperCase().replace(/\s+/g, '')
+  let rank: string
+  let resto: string
+  if (s.startsWith('10')) {
+    rank = '10'
+    resto = s.slice(2)
+  } else if (/[23456789JQKA]/.test(s[0] ?? '')) {
+    rank = s[0]
+    resto = s.slice(1)
+  } else {
+    return null
+  }
+  // O que sobra (naipe) não pode começar com dígito — evita "99", "100".
+  if (/^[0-9]/.test(resto)) return null
+  return RANK_SET.has(rank) ? (rank as Rank) : null
+}
+
+/** Extrai os ranks válidos de uma lista crua de cartas da IA. */
+function extrairCartas(cartas: unknown): Rank[] {
+  if (!Array.isArray(cartas)) return []
+  return cartas
+    .map(normalizarRank)
+    .filter((c): c is Rank => c !== null)
+}
+
+/**
  * Mapeia a resposta crua da IA para os campos do formulário.
  * Função PURA (sem rede) — tratada como entrada não confiável:
  * valida tipos/enums e reaplica a classificação por tamanho/coringa.
@@ -26,9 +58,7 @@ export function mapearAnalise(bruto: unknown): ResultadoAnalise {
   const jogosBrutos = Array.isArray(analise?.jogos) ? analise!.jogos : []
 
   const jogos: JogoReconhecido[] = jogosBrutos.map((j) => {
-    const cartas = Array.isArray(j?.cartas)
-      ? j.cartas.filter((c): c is Rank => RANK_SET.has(c as string))
-      : []
+    const cartas = extrairCartas(j?.cartas)
     const temCoringa = cartas.some((c) => c === '2')
     return {
       cartas,
@@ -133,9 +163,7 @@ export function somarCartasDeAnalise(bruto: unknown): ResultadoSomaMao {
   const analise = bruto as Partial<AnaliseIA> | null
   const jogos = Array.isArray(analise?.jogos) ? analise!.jogos : []
 
-  const cartas = jogos
-    .flatMap((j) => (Array.isArray(j?.cartas) ? j.cartas : []))
-    .filter((c): c is Rank => RANK_SET.has(c as string))
+  const cartas = jogos.flatMap((j) => extrairCartas(j?.cartas))
 
   const confianca =
     analise?.confianca === 'alta' ||
