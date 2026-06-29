@@ -1,7 +1,8 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { RANKS, type Rank } from '../types'
 import { CARD_VALUES } from '../lib/constants'
 import { sumCards } from '../lib/scoring'
+import { somarCartasFoto, type ResultadoSomaMao } from '../lib/aiVision'
 
 interface CardSelectorProps {
   /** Cartas atualmente contadas (multiset por rank). */
@@ -95,14 +96,40 @@ export function ScoreInput({
   value,
   onChange,
   hint,
+  permitirFoto = false,
 }: {
   label: string
   value: number
   onChange: (total: number) => void
   hint?: string
+  /** Habilita o botão de câmera que soma as cartas por foto (modo "mão"). */
+  permitirFoto?: boolean
 }) {
   const [modo, setModo] = useState<'total' | 'cartas'>('total')
   const [counts, setCounts] = useState<Partial<Record<Rank, number>>>({})
+  const fileRef = useRef<HTMLInputElement>(null)
+  const [analisando, setAnalisando] = useState(false)
+  const [erroFoto, setErroFoto] = useState('')
+  const [resultadoFoto, setResultadoFoto] = useState<ResultadoSomaMao>()
+
+  const handleFoto = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    e.target.value = ''
+    if (!file) return
+    setErroFoto('')
+    setResultadoFoto(undefined)
+    setAnalisando(true)
+    try {
+      const r = await somarCartasFoto(file)
+      setResultadoFoto(r)
+      setModo('total') // mostra o número resultante
+      onChange(r.total)
+    } catch (err) {
+      setErroFoto(err instanceof Error ? err.message : 'Falha ao analisar')
+    } finally {
+      setAnalisando(false)
+    }
+  }
 
   const totalCartas = useMemo(() => {
     const flat: Rank[] = []
@@ -140,8 +167,30 @@ export function ScoreInput({
           >
             Cartas
           </button>
+          {permitirFoto && (
+            <button
+              type="button"
+              onClick={() => fileRef.current?.click()}
+              disabled={analisando}
+              className="border-l border-slate-200 bg-white px-2.5 py-1 text-slate-500 disabled:opacity-50"
+              aria-label="Somar cartas por foto"
+              title="Somar cartas por foto"
+            >
+              {analisando ? '…' : '📷'}
+            </button>
+          )}
         </div>
       </div>
+
+      {permitirFoto && (
+        <input
+          ref={fileRef}
+          type="file"
+          accept="image/*"
+          onChange={handleFoto}
+          className="hidden"
+        />
+      )}
 
       {modo === 'total' ? (
         <input
@@ -159,6 +208,19 @@ export function ScoreInput({
             Total: {totalCartas} pts
           </p>
         </div>
+      )}
+      {analisando && (
+        <p className="mt-1 text-xs text-teal-600">Analisando a foto…</p>
+      )}
+      {erroFoto && <p className="mt-1 text-xs text-red-600">{erroFoto}</p>}
+      {resultadoFoto && (
+        <p className="mt-1 text-xs text-slate-500">
+          📷 Lidas {resultadoFoto.cartas.length} cartas ={' '}
+          <span className="font-semibold text-teal-700">
+            {resultadoFoto.total} pts
+          </span>{' '}
+          (confiança {resultadoFoto.confianca}). Confira e ajuste se preciso.
+        </p>
       )}
       {hint && <p className="mt-1 text-xs text-slate-400">{hint}</p>}
     </div>

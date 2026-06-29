@@ -88,15 +88,18 @@ function saneClassificacao(
   return temCoringa ? 'canastra_suja' : 'canastra_limpa'
 }
 
-/** Comprime a foto, envia para /api/analisar e devolve o resultado mapeado. */
-export async function analisarFoto(foto: Blob): Promise<ResultadoAnalise> {
+/** Comprime a foto e envia para /api/analisar no modo indicado; devolve o JSON cru. */
+async function postAnalise(
+  foto: Blob,
+  modo: 'mesa' | 'mao'
+): Promise<unknown> {
   const comprimida = await comprimirImagem(foto)
   const imagem = await blobParaBase64(comprimida)
 
   const res = await fetch('/api/analisar', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ imagem, mime: 'image/jpeg' }),
+    body: JSON.stringify({ imagem, mime: 'image/jpeg', modo }),
   })
 
   if (res.status === 401) {
@@ -107,5 +110,50 @@ export async function analisarFoto(foto: Blob): Promise<ResultadoAnalise> {
     throw new Error(data.erro || 'Falha ao analisar a foto')
   }
 
-  return mapearAnalise(await res.json())
+  return res.json()
+}
+
+/** Analisa os jogos baixados de uma dupla e mapeia para os campos do formulário. */
+export async function analisarFoto(foto: Blob): Promise<ResultadoAnalise> {
+  return mapearAnalise(await postAnalise(foto, 'mesa'))
+}
+
+export interface ResultadoSomaMao {
+  total: number
+  cartas: Rank[]
+  confianca: 'alta' | 'media' | 'baixa'
+  observacoes?: string
+}
+
+/**
+ * Soma o valor de TODAS as cartas reconhecidas (modo "mão" — cartas soltas).
+ * Função PURA/testável: achata os jogos, filtra ranks válidos e soma.
+ */
+export function somarCartasDeAnalise(bruto: unknown): ResultadoSomaMao {
+  const analise = bruto as Partial<AnaliseIA> | null
+  const jogos = Array.isArray(analise?.jogos) ? analise!.jogos : []
+
+  const cartas = jogos
+    .flatMap((j) => (Array.isArray(j?.cartas) ? j.cartas : []))
+    .filter((c): c is Rank => RANK_SET.has(c as string))
+
+  const confianca =
+    analise?.confianca === 'alta' ||
+    analise?.confianca === 'media' ||
+    analise?.confianca === 'baixa'
+      ? analise.confianca
+      : 'baixa'
+
+  return {
+    total: sumCards(cartas),
+    cartas,
+    confianca,
+    observacoes:
+      typeof analise?.observacoes === 'string' ? analise.observacoes : undefined,
+  }
+}
+
+/** Comprime a foto das cartas na mão, envia à IA e devolve a soma. */
+export async function somarCartasFoto(foto: Blob): Promise<ResultadoSomaMao> {
+  return somarCartasDeAnalise(await postAnalise(foto, 'mao'))
 }

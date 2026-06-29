@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { mapearAnalise } from './aiVision'
+import { mapearAnalise, somarCartasDeAnalise } from './aiVision'
 import { calcularPontuacaoRodada, emptyTeamRoundScore } from './scoring'
 
 describe('mapearAnalise', () => {
@@ -123,5 +123,39 @@ describe('mapearAnalise', () => {
       pegouMorto: true,
     }).total
     expect(total).toBe(450) // bônus 200 + 100 + cartas 150
+  })
+})
+
+describe('somarCartasDeAnalise (cartas na mão)', () => {
+  it('soma todas as cartas avulsas reconhecidas', () => {
+    const r = somarCartasDeAnalise({
+      jogos: [
+        { cartas: ['K', '7', 'A', '2'], temCoringa: true, classificacao: 'jogo_simples' },
+      ],
+      confianca: 'alta',
+    })
+    // K(10) + 7(5) + A(15) + 2(10) = 40
+    expect(r.total).toBe(40)
+    expect(r.cartas).toEqual(['K', '7', 'A', '2'])
+    expect(r.confianca).toBe('alta')
+  })
+
+  it('junta cartas de vários grupos e ignora ranks inválidos', () => {
+    const r = somarCartasDeAnalise({
+      jogos: [
+        { cartas: ['3', '4'], temCoringa: false, classificacao: 'jogo_simples' },
+        { cartas: ['Q', 'ZZ', '99'], temCoringa: false, classificacao: 'jogo_simples' },
+      ],
+      confianca: 'media',
+    })
+    // 3(5) + 4(5) + Q(10) = 20; ZZ e 99 descartadas
+    expect(r.total).toBe(20)
+    expect(r.cartas).toEqual(['3', '4', 'Q'])
+  })
+
+  it('robusto a entrada vazia/nula', () => {
+    expect(somarCartasDeAnalise(null).total).toBe(0)
+    expect(somarCartasDeAnalise({}).total).toBe(0)
+    expect(somarCartasDeAnalise(null).confianca).toBe('baixa')
   })
 })

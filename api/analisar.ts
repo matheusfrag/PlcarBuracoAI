@@ -4,7 +4,7 @@ import { lerToken, tokenValido } from './_auth.js'
 const GEMINI_URL = 'https://generativelanguage.googleapis.com/v1beta/models'
 const MAX_BASE64_LEN = 8_000_000 // ~6 MB de imagem; barra payloads abusivos
 
-const PROMPT = `Você é um juiz de buraco analisando uma foto dos JOGOS BAIXADOS NA MESA de UMA dupla.
+const PROMPT_MESA = `Você é um juiz de buraco analisando uma foto dos JOGOS BAIXADOS NA MESA de UMA dupla.
 Identifique cada jogo (conjunto de cartas agrupadas/sobrepostas) visível na foto e liste TODAS as cartas de cada jogo.
 
 CONTEXTO DESTE BARALHO:
@@ -27,6 +27,20 @@ CLASSIFIQUE cada jogo:
 
 Defina "temCoringa" como true se o jogo contém pelo menos um "2".
 Se não tiver certeza da quantidade exata de cartas empilhadas, faça sua melhor estimativa, explique a dúvida em "observacoes" e reduza a "confianca".
+Responda APENAS com o JSON do schema.`
+
+const PROMPT_MAO = `Você está analisando uma foto de CARTAS SOLTAS espalhadas na mesa — são as cartas que sobraram na mão de UMA dupla no buraco, agora espalhadas para contagem.
+
+CONTEXTO DESTE BARALHO:
+- Símbolos válidos: 3,4,5,6,7,8,9,10,J,Q,K,A,2.
+- Não existe joker. Aqui as cartas NÃO formam jogos — são cartas avulsas, apenas para somar.
+
+TAREFA:
+- Liste TODAS as cartas visíveis, uma entrada por carta. NÃO agrupe nem classifique.
+- Se houver cartas sobrepostas, conte pelos ÍNDICES nos cantos (número/letra), sem pular nenhuma.
+- Coloque TODAS as cartas em um ÚNICO item de "jogos", com "classificacao": "jogo_simples" e "temCoringa": false.
+
+Se não tiver certeza da quantidade, faça sua melhor estimativa, explique em "observacoes" e reduza a "confianca".
 Responda APENAS com o JSON do schema.`
 
 interface GeminiPart {
@@ -54,6 +68,9 @@ export default async function handler(
     return
   }
   const model = process.env.GEMINI_MODEL || 'gemini-2.5-flash'
+
+  const modo = req.body?.modo === 'mao' ? 'mao' : 'mesa'
+  const prompt = modo === 'mao' ? PROMPT_MAO : PROMPT_MESA
 
   const imagemBase64 = req.body?.imagem as string | undefined
   const mime = (req.body?.mime as string | undefined) || 'image/jpeg'
@@ -112,7 +129,7 @@ export default async function handler(
           contents: [
             {
               parts: [
-                { text: PROMPT },
+                { text: prompt },
                 { inline_data: { mime_type: mime, data: imagemBase64 } },
               ],
             },

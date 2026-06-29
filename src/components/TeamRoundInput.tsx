@@ -99,7 +99,8 @@ export default function TeamRoundInput({
         label="Cartas na mão (a subtrair)"
         value={score.cartasNaMaoPontos}
         onChange={(v) => set('cartasNaMaoPontos', v)}
-        hint="Cartas que sobraram com a dupla."
+        hint="Cartas que sobraram com a dupla. Toque na 📷 para somar por foto (espalhe as cartas na mesa)."
+        permitirFoto
       />
 
       <div className="flex gap-3">
