@@ -2,6 +2,7 @@ import { useLiveQuery } from 'dexie-react-hooks'
 import { Link, useNavigate } from 'react-router-dom'
 import Layout from '../components/Layout'
 import { calcularTotais, db, excluirPartida } from '../lib/db'
+import { logout } from '../lib/auth'
 import type { Game } from '../types'
 
 export default function Home() {
@@ -13,8 +14,23 @@ export default function Home() {
   const ativas = games?.filter((g) => g.status === 'active') ?? []
   const encerradas = games?.filter((g) => g.status === 'finished') ?? []
 
+  const handleLogout = async () => {
+    await logout()
+    window.location.reload() // AuthGate reverifica e volta para a tela de senha
+  }
+
   return (
-    <Layout title="Placar Buraco">
+    <Layout
+      title="Placar Buraco"
+      action={
+        <button
+          onClick={handleLogout}
+          className="rounded-lg px-2.5 py-1 text-sm font-medium text-white/90 transition hover:bg-white/15"
+        >
+          Sair
+        </button>
+      }
+    >
       <button
         onClick={() => navigate('/nova')}
         className="mb-6 w-full rounded-xl bg-teal-600 py-4 text-lg font-semibold text-white shadow transition active:scale-[0.99] hover:bg-teal-700"

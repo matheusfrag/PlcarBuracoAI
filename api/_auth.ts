@@ -60,6 +60,18 @@ export function montarCookie(token: string): string {
   ].join('; ')
 }
 
+/** Header Set-Cookie que apaga o cookie de sessão (logout). */
+export function cookieLimpo(): string {
+  return [
+    `${COOKIE_NAME}=`,
+    'HttpOnly',
+    'Secure',
+    'SameSite=Strict',
+    'Path=/',
+    'Max-Age=0',
+  ].join('; ')
+}
+
 /** Extrai o token do header Cookie da requisição. */
 export function lerToken(cookieHeader: string | undefined): string | undefined {
   if (!cookieHeader) return undefined

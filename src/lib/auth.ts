@@ -12,6 +12,11 @@ export async function login(senha: string): Promise<void> {
   }
 }
 
+/** Encerra a sessão no servidor (apaga o cookie). */
+export async function logout(): Promise<void> {
+  await fetch('/api/logout', { method: 'POST' })
+}
+
 /** Consulta o servidor se o cookie de sessão atual é válido. */
 export async function verificarSessao(): Promise<boolean> {
   try {
