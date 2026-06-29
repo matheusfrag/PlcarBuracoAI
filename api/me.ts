@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
-import { lerToken, tokenValido } from './_auth'
+import { lerToken, tokenValido } from './_auth.js'
 
 /** Informa ao cliente se a sessão atual (cookie) é válida. */
 export default function handler(req: VercelRequest, res: VercelResponse) {

@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
-import { lerToken, tokenValido } from './_auth'
+import { lerToken, tokenValido } from './_auth.js'
 
 const GEMINI_URL = 'https://generativelanguage.googleapis.com/v1beta/models'
 const MAX_BASE64_LEN = 8_000_000 // ~6 MB de imagem; barra payloads abusivos

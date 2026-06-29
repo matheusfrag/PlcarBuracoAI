@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
-import { criarToken, montarCookie, senhaConfere } from './_auth'
+import { criarToken, montarCookie, senhaConfere } from './_auth.js'
 
 // Rate-limit simples em memória (por instância). Reseta a cada cold start.
 const tentativas = new Map<string, { count: number; reset: number }>()
