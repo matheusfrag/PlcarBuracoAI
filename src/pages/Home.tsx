@@ -23,12 +23,22 @@ export default function Home() {
     <Layout
       title="Placar Buraco"
       action={
-        <button
-          onClick={handleLogout}
-          className="rounded-lg px-2.5 py-1 text-sm font-medium text-white/90 transition hover:bg-white/15"
-        >
-          Sair
-        </button>
+        <div className="flex items-center gap-1">
+          <button
+            onClick={() => navigate('/config')}
+            className="rounded-lg px-2 py-1 text-lg transition hover:bg-white/15"
+            aria-label="Configurações"
+            title="Configurações"
+          >
+            ⚙️
+          </button>
+          <button
+            onClick={handleLogout}
+            className="rounded-lg px-2.5 py-1 text-sm font-medium text-white/90 transition hover:bg-white/15"
+          >
+            Sair
+          </button>
+        </div>
       }
     >
       <button

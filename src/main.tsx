@@ -7,6 +7,7 @@ import Home from './pages/Home.tsx'
 import GameSetup from './pages/GameSetup.tsx'
 import GameView from './pages/GameView.tsx'
 import RoundForm from './pages/RoundForm.tsx'
+import Config from './pages/Config.tsx'
 
 const router = createBrowserRouter([
   { path: '/', element: <Home /> },
@@ -14,6 +15,7 @@ const router = createBrowserRouter([
   { path: '/partida/:id', element: <GameView /> },
   { path: '/partida/:id/rodada', element: <RoundForm /> },
   { path: '/partida/:id/rodada/:roundId', element: <RoundForm /> },
+  { path: '/config', element: <Config /> },
 ])
 
 createRoot(document.getElementById('root')!).render(
